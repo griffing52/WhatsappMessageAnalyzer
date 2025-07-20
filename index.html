@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whatsapp Message Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="icon.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Whatsapp Message Analyzer :)</h1>
+        <!-- <h1>TEST</h1> -->
+        <p>A beautiful journey through your WhatsApp chats</p>
+        <a style="position: absolute; top: 50px; left: 50px; color: white;", href="how_to_use.html">How to use</a>
+
+    </header>
+    <main>
+        <section id="upload">
+            <h2>Upload Your Chat</h2>
+            <input type="file" id="chatFile" accept=".txt">
+            <button onclick="parseChat()">Analyze</button>
+        </section>
+        
+        <section id="filters">
+            <h2>Adjust Time Period</h2>
+            <!-- <div class="range-slider">
+                <span class="rangeValues"></span>
+                <input value="5" min="0" max="15" step="0.5" type="range">
+                <input value="10" min="0" max="15" step="0.5" type="range">
+            </div> -->
+            <p>
+                <label for="amount">Date range:</label><br>
+                <input type="text" id="amount" style="padding: 10px; color: white; text-align: center; background-color: #075e54; width:40%" />
+            </p>
+            <div id="slider-range"></div>
+        </section>
+
+        <section id="summary">
+            <h2>Fun Facts</h2>
+            <p>Total Messages: <span id="totalMessages">0</span></p>
+            <p>Total Words: <span id="totalWords">0</span></p>
+            <p>Unique Words: <span id="uniqueWords">0</span></p>
+            <p>Images Sent: <span id="imagesSent">0</span></p>
+            <p>Longest Streak: <span id="longestStreak">0</span> days</p>
+        </section>
+        <section id="tables">
+            <h2>Most Used</h2>
+            <p>Emojis: </p>
+            <div class="tableLimit">
+            <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Emoji</th>
+                    <th scope="col">Frequency</th>
+                  </tr>
+                </thead>
+                <tbody id="emojiTable">
+                  <tr>
+                    <th scope="row">1</th>
+                    <th scope="row">�</th>
+                    <td>1343</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <th scope="row">�</th>
+                    <td>212</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <p>Words:</p> 
+            <!-- <button onclick="downloadWords()">Download</button> -->
+            <a id="download_words" download="word_data.txt"></a>
+            <div class="tableLimit">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Word</th>
+                    <th scope="col">Frequency</th>
+                  </tr>
+                </thead>
+                <tbody id="wordTable">
+                    <tr>
+                        <th scope="row">1</th>
+                        <th scope="row">�</th>
+                        <td>1343</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">2</th>
+                        <th scope="row">�</th>
+                        <td>212</td>
+                      </tr>
+                </tbody>
+              </table>
+            </div>
+        </section>
+
+        <section class="search-section">
+            <h2>🔍 Search Messages</h2>
+            <input type="text" id="searchInput" onkeydown="searchFromEnter(event)" placeholder="Search for a word...">
+            <button id="searchButton" onclick="searchWord()">Search</button>
+            <p id="searchResults"></p>
+            <canvas id="searchBarChart" style="display:none;"></canvas>
+        </section>
+        
+        <section id="ahhh">
+            <h2>Ahhh Bar Chart</h2>
+            <p>How many did we use?</p>
+            <canvas id="ahBarChart"></canvas>
+        </section>
+
+        <section id="charts">
+            <h2>Message Timeline</h2>
+            <canvas id="chatTimeline"></canvas>
+        </section>
+
+        <section id="rareFinds">
+            <h2>Rare Finds</h2>
+            <p>Emojis: </p>
+            <div class="tableLimit">
+            <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Emoji</th>
+                    <th scope="col">Frequency</th>
+                  </tr>
+                </thead>
+                <tbody id="rareEmojiTable">
+                  <tr>
+                    <th scope="row">1</th>
+                    <th scope="row">�</th>
+                    <td>1343</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <th scope="row">�</th>
+                    <td>212</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <p>Words:</p>
+            <div class="tableLimit">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Word</th>
+                    <th scope="col">Frequency</th>
+                  </tr>
+                </thead>
+                <tbody id="rareWordTable">
+                    <tr>
+                        <th scope="row">1</th>
+                        <th scope="row">�</th>
+                        <td>1343</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">2</th>
+                        <th scope="row">�</th>
+                        <td>212</td>
+                      </tr>
+                </tbody>
+              </table>
+            </div>
+        </section>    
+
+        <section id="activityByDay">
+            <h2>Activity By Day</h2>
+            <div style="width: 80%; margin:auto">
+                <canvas id="byDayChart"></canvas>
+            </div>
+        </section>
+
+        <section id="activityByHour">
+            <h2>When Are We Up!</h2>
+            <canvas id="byHourChart"></canvas>
+        </section>
+
+        <section id="randomWord">
+            <h2>Random Word</h2>
+            <button id="randomWordButton" onclick="getRandomWord()">Generate</button>
+            <p id="randomWordText"></p>
+
+            <h2>Random Message</h2>
+            <button id="randomMessageButton" onclick="getRandomMessage()">Generate</button>
+            <p id="randomMessageText"></p>
+        </section>
+
+        <section class="day-messages-section">
+            <h2>📅 View Messages by Day</h2>
+            <input type="date" id="datePicker">
+            <button id="viewMessagesButton" onclick="findMessagesByDay()">View Messages</button>
+            <div class="tableLimit">
+                <div id="messagesContainer" class="messages-container"></div>
+            </div>
+        </section>
+
+        <section id="spicy" style="display:none;">
+            <div id="hidden">
+                <h2>18+</h2>
+                <p>Spicy words:</p>
+
+                <div class="tableLimit">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th scope="col">Rank</th>
+                          <th scope="col">Word</th>
+                          <th scope="col">Frequency</th>
+                        </tr>
+                      </thead>
+                      <tbody id="spicyTable">
+                          <tr>
+                              <th scope="row">1</th>
+                              <th scope="row">�</th>
+                              <td>1343</td>
+                            </tr>
+                            <tr>
+                              <th scope="row">2</th>
+                              <th scope="row">�</th>
+                              <td>212</td>
+                            </tr>
+                      </tbody>
+                    </table>
+                </div>
+
+                <br><br>
+                <button id="spicyButton" onclick="getSpicy()">Get Surprise 😉</button>
+                <p id="spicyWord"></p>
+                <p id="spicyText"></p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Wholesome</h2>
+            <button id="wholesomeButton" onclick="getWholesome()">Generate</button>
+            <p id="wholesomeText"></p>
+        </section>
+
+        <section>
+            <h2>Random Emoji</h2>
+            <button id="randomEmojiButton" onclick="getRandomEmoji()">Generate</button>
+            <p id="randomEmojiText"></p>
+        </section>
+
+        <section>
+          <h2>AI Sections</h2>
+        </section>
+        <div id="ai-sections">
+        </div>
+        <section>
+            <h2>AI Generate Section</h2>
+            <textarea id="generateText" placeholder="Type your message here..."></textarea><br>
+            <button id="createWithAI" onclick="createWithAI()">Create with AI</button>
+        </section>
+      </main>
+    
+    <script src="main.js"></script>
+</body>
+</html>
